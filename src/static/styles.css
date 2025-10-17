@@ -142,3 +142,79 @@ footer {
   padding: 20px;
   color: #666;
 }
+
+.participants {
+  margin-top: 12px;
+  padding: 12px;
+  background: linear-gradient(180deg, #ffffff 0%, #f4f8ff 100%);
+  border: 1px solid #e3eefc;
+  border-radius: 6px;
+  box-shadow: 0 1px 0 rgba(255,255,255,0.6) inset;
+}
+
+.participants-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+  font-weight: 600;
+  color: #0b3d91;
+  font-size: 14px;
+}
+
+.participants-count {
+  background: #e6f0ff;
+  color: #0b3d91;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 12px;
+}
+
+.participants-list {
+  list-style: none;
+  margin: 0;
+  padding-left: 0;
+  color: #2c3e50;
+  font-size: 14px;
+}
+
+.participants-list li {
+  padding: 6px 8px;
+  border-bottom: 1px dashed rgba(10, 30, 80, 0.04);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.participants-list li:last-child {
+  border-bottom: none;
+}
+
+.no-participants {
+  color: #6b7280;
+  font-style: italic;
+  font-size: 13px;
+}
+
+/* Participant item layout */
+.participant-name {
+  flex: 1 1 auto;
+  margin-right: 8px;
+  word-break: break-all;
+}
+
+.participant-delete {
+  background: transparent;
+  border: none;
+  color: #c62828;
+  font-size: 16px;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: background-color 0.15s, color 0.15s;
+}
+
+.participant-delete:hover {
+  background-color: rgba(198, 40, 40, 0.08);
+  color: #b71c1c;
+}
