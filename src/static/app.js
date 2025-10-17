@@ -7,7 +7,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // Function to fetch activities from API
   async function fetchActivities() {
     try {
-      const response = await fetch("/activities");
+  const response = await fetch("/activities", { cache: 'no-store' });
       const activities = await response.json();
 
       // Clear loading message / existing cards
@@ -64,7 +64,43 @@ document.addEventListener("DOMContentLoaded", () => {
           ul.className = "participants-list";
           details.participants.forEach(p => {
             const li = document.createElement("li");
-            li.textContent = p;
+            li.className = 'participant-item';
+
+            const nameSpan = document.createElement('span');
+            nameSpan.textContent = p;
+            nameSpan.className = 'participant-name';
+
+            const delBtn = document.createElement('button');
+            delBtn.className = 'participant-delete';
+            delBtn.title = 'Unregister participant';
+            delBtn.innerHTML = '\u2716'; // heavy multiplication X
+            delBtn.addEventListener('click', async () => {
+              try {
+                const resp = await fetch(`/activities/${encodeURIComponent(name)}/unregister?email=${encodeURIComponent(p)}`,
+                  { method: 'DELETE' });
+                if (!resp.ok) {
+                  const err = await resp.json().catch(()=>({detail: resp.statusText}));
+                  messageDiv.textContent = err.detail || 'Failed to unregister';
+                  messageDiv.className = 'message error';
+                  messageDiv.classList.remove('hidden');
+                  setTimeout(()=>messageDiv.classList.add('hidden'), 4000);
+                  return;
+                }
+                const data = await resp.json().catch(()=>({message:'Unregistered'}));
+                messageDiv.textContent = data.message || 'Unregistered successfully';
+                messageDiv.className = 'message success';
+                messageDiv.classList.remove('hidden');
+                // Refresh activities
+                await fetchActivities();
+              } catch (err) {
+                messageDiv.textContent = 'Network error while unregistering';
+                messageDiv.className = 'message error';
+                messageDiv.classList.remove('hidden');
+              }
+            });
+
+            li.appendChild(nameSpan);
+            li.appendChild(delBtn);
             ul.appendChild(li);
           });
           participantsWrap.appendChild(ul);

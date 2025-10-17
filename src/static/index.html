@@ -48,7 +48,7 @@
     <script>
       // Fetch activities and render UI
       async function loadActivities() {
-        const resp = await fetch('/activities');
+        const resp = await fetch('/activities', { cache: 'no-store' });
         if (!resp.ok) {
           showMessage('Unable to load activities', 'error');
           return;
@@ -107,7 +107,36 @@
             ul.className = 'participants-list';
             for (const p of info.participants) {
               const li = document.createElement('li');
-              li.textContent = p;
+              li.className = 'participant-item';
+
+              const nameSpan = document.createElement('span');
+              nameSpan.textContent = p;
+              nameSpan.className = 'participant-name';
+
+              const delBtn = document.createElement('button');
+              delBtn.className = 'participant-delete';
+              delBtn.title = 'Unregister participant';
+              delBtn.innerHTML = '\u2716';
+              // Attach handler to call DELETE endpoint
+              delBtn.addEventListener('click', async () => {
+                try {
+                  const url = `/activities/${encodeURIComponent(name)}/unregister?email=${encodeURIComponent(p)}`;
+                  const resp = await fetch(url, { method: 'DELETE' });
+                  if (!resp.ok) {
+                    const err = await resp.json().catch(()=>({detail: resp.statusText}));
+                    showMessage(err.detail || 'Failed to unregister', 'error');
+                    return;
+                  }
+                  const data = await resp.json().catch(()=>({message:'Unregistered'}));
+                  showMessage(data.message || 'Unregistered successfully', 'success');
+                  await loadActivities();
+                } catch (err) {
+                  showMessage('Network error while unregistering', 'error');
+                }
+              });
+
+              li.appendChild(nameSpan);
+              li.appendChild(delBtn);
               ul.appendChild(li);
             }
             participantsWrap.appendChild(ul);
